@@ -33,6 +33,19 @@ std::vector<std::vector<char>> readCharMatrix(const std::string& fileName) {
     return toReturn;
 }
 
+std::vector<std::vector<int>> readIntMatrix(const std::string& fileName) {
+    std::vector<std::vector<int>> toReturn;
+    std::vector<std::string> lines = readLines(fileName);
+    for (int i = 0; i < lines.size(); i++) {
+        std::vector<int> toPush;
+        for (int j = 0; j < lines[i].size(); j++) {
+            toPush.push_back(lines[i][j] - '0');
+        }
+        toReturn.push_back(toPush);
+    }
+    return toReturn;
+}
+
 std::vector<std::string> splitStr(const std::string& str, const std::string& delimiter) {
     std::vector<std::string> tokens;
     size_t start = 0;

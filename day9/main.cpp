@@ -8,10 +8,11 @@
 
 using namespace std;
 
+// start inclusive, end exclusive
 struct DiskFragment {
-    int startIndex;
-    int endIndex;
-    int getLength() { return std::max(0, endIndex - startIndex); };
+    int start;
+    int end;
+    int getLength() { return end - start; };
 };
 
 int findFreeBlock(const vector<int> &decoded, int start = 0) {
@@ -57,8 +58,8 @@ void part1(const string &line) {
         freeBlockIndex = findFreeBlock(decoded, freeBlockIndex + 1);
         fileToMoveIndex = findFileToMove(decoded, fileToMoveIndex - 1);
     }
-    printVec(decoded);
-    cout << "FREE BLOCK INDEX = " << freeBlockIndex << " | FILE TO MOVE INDEX = " << fileToMoveIndex << endl;
+    // printVec(decoded);
+    // cout << "FREE BLOCK INDEX = " << freeBlockIndex << " | FILE TO MOVE INDEX = " << fileToMoveIndex << endl;
     long long toReturn = 0;
     cout << "FREE BLOCK INDEX = " << freeBlockIndex << endl;
     for (int i = 0; i < freeBlockIndex; i++) {
@@ -77,60 +78,66 @@ void part2(const string &line) {
 
     for (char c : line) {
         int digit = c - '0';
-        int startIndex = currIndex;
-        int endIndex = currIndex + digit - 1;
-        DiskFragment fragment = {startIndex, endIndex};
-        // cout << "Adding fragment from range [" << startIndex << ", " << endIndex
-        //      << "] and length =" << fragment.getLength() << endl;
-        currIndex = endIndex + 1;
-        if (isFile) {
-            files.push_back(fragment);
+        int start = currIndex;
+        int end = currIndex + digit;
+        DiskFragment fragment = {start, end};
+        currIndex = end;
+        if (fragment.getLength() <= 0) {
+            // cout << "Skipping because length is 0: digit, isFile: " << digit << ", " << isFile << endl;
         } else {
-            freeSpaces.push_back(fragment);
+            if (isFile) {
+                files.push_back(fragment);
+                // cout << "Adding file from range [" << start << ", " << end << ") and length = " <<
+                // fragment.getLength()
+                //      << endl;
+            } else {
+                freeSpaces.push_back(fragment);
+                // cout << "Adding freeSpace from range [" << start << ", " << end
+                //      << ") and length = " << fragment.getLength() << endl;
+            }
         }
         isFile = !isFile;
     }
-    // cout << "Files..." << endl;
-    // for (int i = 0; i < files.size(); i++) {
-    //     cout << "\tFile " << i << ": [" << files[i].startIndex << ", " << files[i].endIndex << "]" << endl;
-    // }
-    // cout << "Empty Spaces..." << endl;
-    // for (int i = 0; i < freeSpaces.size(); i++) {
-    //     cout << "\tFree Space " << i << ": [" << freeSpaces[i].startIndex << ", " << freeSpaces[i].endIndex << "]"
-    //          << endl;
-    // }
+
+    cout << "Files..." << endl;
+    for (int i = 0; i < files.size(); i++) {
+        cout << "\tFile " << i << ": [" << files[i].start << ", " << files[i].end << "]" << endl;
+    }
+    cout << "Empty Spaces..." << endl;
+    for (int i = 0; i < freeSpaces.size(); i++) {
+        cout << "\tFree Space " << i << ": [" << freeSpaces[i].start << ", " << freeSpaces[i].end << "]" << endl;
+    }
     for (int i = files.size() - 1; i >= 0; i--) {
         int fileId = i;
         DiskFragment file = files[i];
         for (int j = 0; j < freeSpaces.size(); j++) {
             DiskFragment freeSpace = freeSpaces[j];
-            if (freeSpace.startIndex > file.startIndex) {
+            if (freeSpace.start > file.start) {
                 break;
             }
             if (file.getLength() <= freeSpace.getLength()) {
-                freeSpaces[j] = {freeSpace.startIndex + file.getLength() + 1, freeSpace.endIndex};
-                files[i] = {freeSpace.startIndex, freeSpace.startIndex + file.getLength()};
-                // cout << "Moving file " << fileId << " to " << freeSpace.startIndex << " | remainingFreeSpace = ["
-                //      << freeSpaces[j].startIndex << ", " << freeSpaces[j].endIndex << "]" << endl;
+                freeSpaces[j] = {freeSpace.start + file.getLength(), freeSpace.end};
+                files[i] = {freeSpace.start, freeSpace.start + file.getLength()};
+                cout << "Moving file " << fileId << " to " << freeSpace.start << " | remainingFreeSpace = ["
+                     << freeSpaces[j].start << ", " << freeSpaces[j].end << "]" << endl;
                 break;
             }
         }
     }
-    cout << "Files..." << endl;
-    for (int i = 0; i < files.size(); i++) {
-        cout << "\tFile " << i << ": [" << files[i].startIndex << ", " << files[i].endIndex << "]" << endl;
-    }
-    cout << "Empty Spaces..." << endl;
-    for (int i = 0; i < freeSpaces.size(); i++) {
-        cout << "\tFree Space " << i << ": [" << freeSpaces[i].startIndex << ", " << freeSpaces[i].endIndex << "]"
-             << endl;
-    }
+    // cout << "Files..." << endl;
+    // for (int i = 0; i < files.size(); i++) {
+    //     cout << "\tFile " << i << ": [" << files[i].start << ", " << files[i].end << "]" << endl;
+    // }
+    // cout << "Empty Spaces..." << endl;
+    // for (int i = 0; i < freeSpaces.size(); i++) {
+    //     cout << "\tFree Space " << i << ": [" << freeSpaces[i].start << ", " << freeSpaces[i].end << "]" << endl;
+    // }
 
     // Calc checksum
     long toReturn = 0;
     for (int i = 0; i < files.size(); i++) {
         DiskFragment file = files[i];
-        for (int j = file.startIndex; j <= file.endIndex; j++) {
+        for (int j = file.start; j < file.end; j++) {
             toReturn += i * j;
         }
     }

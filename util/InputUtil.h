@@ -7,6 +7,7 @@
 
 std::vector<std::string> readLines(const std::string &fileName);
 std::vector<std::vector<char>> readCharMatrix(const std::string &fileName);
+std::vector<std::vector<int>> readIntMatrix(const std::string &fileName);
 std::vector<std::string> splitStr(const std::string &str, const std::string &delimiter);
 
 template <typename T>
