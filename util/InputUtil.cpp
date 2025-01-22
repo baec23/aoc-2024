@@ -1,5 +1,6 @@
 #include "InputUtil.h"
 
+#include <deque>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -60,4 +61,15 @@ std::vector<std::string> splitStr(const std::string& str, const std::string& del
     // Add the last token
     tokens.push_back(str.substr(start));
     return tokens;
+}
+
+int charToInt(char c) { return c - '0'; }
+
+std::string dequeToString(const std::deque<int>& deque) {
+    std::vector<char> toReturn;
+    for (int val : deque) {
+        toReturn.push_back(val + '0');
+    }
+    std::string str(toReturn.begin(), toReturn.end());
+    return str;
 }

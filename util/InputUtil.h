@@ -1,6 +1,7 @@
 #ifndef INPUT_UTIL_H
 #define INPUT_UTIL_H
 
+#include <deque>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -9,6 +10,8 @@ std::vector<std::string> readLines(const std::string &fileName);
 std::vector<std::vector<char>> readCharMatrix(const std::string &fileName);
 std::vector<std::vector<int>> readIntMatrix(const std::string &fileName);
 std::vector<std::string> splitStr(const std::string &str, const std::string &delimiter);
+int charToInt(char c);
+std::string dequeToString(const std::deque<int> &deque);
 
 template <typename T>
 void printVec(const std::vector<T> &vec, bool isOneLine = true) {
