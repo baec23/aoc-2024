@@ -13,6 +13,19 @@ std::vector<std::string> splitStr(const std::string &str, const std::string &del
 int charToInt(char c);
 std::string dequeToString(const std::deque<int> &deque);
 
+struct Point {
+    int row;
+    int col;
+
+    bool operator<(const Point &other) const { return (row < other.row) || (row == other.row && col < other.col); }
+    bool operator==(const Point &other) const { return (row == other.row) && (col == other.col); }
+
+    Point up() { return {row - 1, col}; }
+    Point right() { return {row, col + 1}; }
+    Point down() { return {row + 1, col}; }
+    Point left() { return {row, col - 1}; }
+};
+
 template <typename T>
 void printVec(const std::vector<T> &vec, bool isOneLine = true) {
     if (isOneLine) {
